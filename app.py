@@ -311,47 +311,14 @@ button[kind="headerNoPadding"],
     font-family: "Times New Roman", Times, serif !important;
 }
 
-/* ── Sliders ── */
-.stSlider label,
-.stSlider [data-testid="stWidgetLabel"],
+/* ── Sliders — label text only ── */
 .stSlider [data-testid="stWidgetLabel"] p,
-.stSlider span,
-div[data-testid="stSlider"] label,
-div[data-testid="stSlider"] p {
+.stSlider [data-testid="stWidgetLabel"] label,
+div[data-testid="stSlider"] [data-testid="stWidgetLabel"] p {
     font-family: "Times New Roman", Times, serif !important;
     font-size: 0.92rem !important;
     color: #f0e8d8 !important;
-    background: transparent !important;
-    background-color: transparent !important;
     -webkit-text-fill-color: #f0e8d8 !important;
-}
-
-/* Force slider label visibility — clear background pill, cream text */
-[data-testid="stWidgetLabel"] {
-    color: #f0e8d8 !important;
-    background: transparent !important;
-    background-color: transparent !important;
-}
-[data-testid="stWidgetLabel"] p,
-[data-testid="stWidgetLabel"] span {
-    color: #f0e8d8 !important;
-    -webkit-text-fill-color: #f0e8d8 !important;
-    font-size: 0.92rem !important;
-    font-family: "Times New Roman", Times, serif !important;
-    background: transparent !important;
-    background-color: transparent !important;
-}
-
-/* Remove any text-selection highlight appearance */
-.stSlider [data-testid="stWidgetLabel"] *,
-div[data-testid="stSlider"] * {
-    background: transparent !important;
-    background-color: transparent !important;
-}
-
-/* Ensure column/block background stays transparent */
-section.main [data-testid="column"] {
-    background: transparent !important;
 }
 
 /* Slider tick / min-max value numbers */
