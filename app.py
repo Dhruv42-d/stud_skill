@@ -951,7 +951,7 @@ def plot_skill_by_target(df):
     palette = CHART_PALETTE[:len(targets)]
     for i, col in enumerate(avail):
         data = [df[df['Target'] == t][col].values for t in targets]
-        bp = axes[i].boxplot(data, labels=targets, patch_artist=True,
+        bp = axes[i].boxplot(data, tick_labels=targets, patch_artist=True,
                              medianprops=dict(color=C_AMBER, linewidth=2.5),
                              whiskerprops=dict(color='#444444', linewidth=1),
                              capprops=dict(color='#444444', linewidth=1.5),
