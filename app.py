@@ -312,10 +312,38 @@ button[kind="headerNoPadding"],
 }
 
 /* ── Sliders ── */
-.stSlider label {
+.stSlider label,
+.stSlider [data-testid="stWidgetLabel"],
+.stSlider [data-testid="stWidgetLabel"] p,
+.stSlider span,
+div[data-testid="stSlider"] label,
+div[data-testid="stSlider"] p {
     font-family: "Times New Roman", Times, serif !important;
     font-size: 0.92rem !important;
-    color: var(--ink) !important;
+    color: #0a0e1a !important;
+}
+
+/* Force slider label visibility in any theme */
+[data-testid="stWidgetLabel"] {
+    color: #0a0e1a !important;
+    background: transparent !important;
+}
+[data-testid="stWidgetLabel"] p {
+    color: #0a0e1a !important;
+    font-size: 0.92rem !important;
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+/* Ensure column/block background stays light for sliders */
+section.main [data-testid="column"] {
+    background: transparent !important;
+}
+
+/* Slider tick / min-max value numbers */
+.stSlider [data-testid="stTickBarMin"],
+.stSlider [data-testid="stTickBarMax"] {
+    color: #5c5446 !important;
+    font-size: 0.78rem !important;
 }
 
 /* ── Buttons ── */
