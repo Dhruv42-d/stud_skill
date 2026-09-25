@@ -978,27 +978,6 @@ def plot_skill_by_target(df):
     fig.patch.set_facecolor("#f7f3ec"); plt.tight_layout(pad=2)
     return fig
 
-def plot_correlation_heatmap(df):
-    avail = [c for c in SKILL_COLS + SUBJECT_COLS if c in df.columns]
-    if len(avail) < 2: return None
-    corr = df[avail].corr()
-    readable = {c: SKILL_NAMES.get(c, SUBJECT_NAMES.get(c, c)) for c in avail}
-    corr = corr.rename(index=readable, columns=readable)
-    fig, ax = plt.subplots(figsize=(11, 7))
-    cmap = mpl.colors.LinearSegmentedColormap.from_list("cr_teal", [C_CRIMSON, "#f7f3ec", C_TEAL], N=256)
-    sns.heatmap(corr, ax=ax, annot=True, fmt=".2f", cmap=cmap, linewidths=0.6,
-                linecolor="#e0d8cc", vmin=-1, vmax=1,
-                annot_kws={"size": 9, "weight": "bold", "color": "#ffffff"},
-                cbar_kws={"shrink": 0.75, "label": "Pearson r"})
-    for text in ax.texts:
-        val = float(text.get_text())
-        text.set_color("#0a0e1a" if abs(val) < 0.35 else "#ffffff")
-    ax.set_title("Correlation Matrix — Skills & Subject Knowledge", fontsize=12, fontweight='bold', color=C_NAVY, fontfamily='serif', pad=14)
-    ax.set_facecolor(C_PAPER); fig.patch.set_facecolor("#f7f3ec")
-    plt.xticks(rotation=30, ha='right', fontsize=9); plt.yticks(rotation=0, fontsize=9)
-    plt.tight_layout(pad=2)
-    return fig
-
 def plot_avg_score_by_target(df):
     if 'Target' not in df.columns or 'overall_score' not in df.columns: return None
     avg = df.groupby('Target')['overall_score'].mean().sort_values(ascending=False)
@@ -1182,17 +1161,11 @@ intuition alone, particularly for consequential academic decisions."
 
 **How to read a box plot:** The central line = median. Box edges = 25th/75th percentiles. Dots = outliers.
             """, "box_skill")
-        chart_section("⑤ Correlation Matrix — Skills & Subject Knowledge", plot_correlation_heatmap(df),
-            "What this chart shows & how to read it", """
-**What it shows:** Pearson correlation coefficients between every pair of skill and subject columns.
-
-**How to read the colours:** Deep crimson = strong negative. Near-white = no relationship. Deep teal = strong positive.
-            """, "heatmap")
-        chart_section("⑥ Average Overall Score by Recommended Subject", plot_avg_score_by_target(df),
+        chart_section("⑤ Average Overall Score by Recommended Subject", plot_avg_score_by_target(df),
             "What this chart shows & how to read it", """
 **What it shows:** Mean overall score (60% avg skill + 40% avg subject knowledge) per recommended subject.
             """, "avg_score")
-        st.markdown("<div class='chart-label'>⑦ Descriptive Statistics — All Numeric Columns</div>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-label'>⑥ Descriptive Statistics — All Numeric Columns</div>", unsafe_allow_html=True)
         avail = [c for c in SKILL_COLS + SUBJECT_COLS if c in df.columns]
         if 'overall_score' in df.columns: avail.append('overall_score')
         st.dataframe(df[avail].describe().round(3), use_container_width=True)
