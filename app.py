@@ -1069,8 +1069,8 @@ def main():
     st.sidebar.markdown(f"""
     <div style='text-align:center;padding:1rem 0.5rem;font-size:0.85rem;color:#e8e2d4;'>
         <p style='margin:0.3rem 0;'>📚 <b>{len(df)}</b> Students</p>
-        <p style='margin:0.3rem 0;'>🎓 <b>8</b> Subjects</p>
-        <p style='margin:0.3rem 0;'>🧠 <b>6</b> Skills</p>
+        <p style='margin:0.3rem 0;'>🎓 <b>5</b> Subjects</p>
+        <p style='margin:0.3rem 0;'>🧠 <b>4</b> Skills</p>
         <p style='margin:0.3rem 0;'>🤖 <b>6</b> ML Models</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1094,8 +1094,8 @@ performance and reduced career satisfaction.
             st.markdown("<div class='sub-title'>Our Approach</div>", unsafe_allow_html=True)
             st.markdown("""
 We collect two types of data:
-- **Cognitive Skills** — six measurable intellectual traits rated 1–4
-- **Subject Knowledge** — proficiency across eight academic domains rated 1–5
+- **Cognitive Skills** — four measurable intellectual traits rated 1–4
+- **Subject Knowledge** — proficiency across five academic domains rated 1–5
 
 A trained ML classifier maps this profile to the most suitable subject.
             """)
@@ -1166,7 +1166,7 @@ intuition alone, particularly for consequential academic decisions."
             """, "skill_dist")
         chart_section("② Subject Knowledge Distributions", plot_subject_distribution(df),
             "What this chart shows & how to read it", """
-**What it shows:** How student knowledge is spread across eight subject domains on a 1–5 scale.
+**What it shows:** How student knowledge is spread across five subject domains on a 1–5 scale.
 
 **How to read it:** A bar peaking at rating 1 means most students are beginners. A peak at 4–5 indicates strong knowledge.
             """, "subj_dist")
@@ -1308,7 +1308,7 @@ intuition alone, particularly for consequential academic decisions."
         st.markdown("<div class='section-title'>🔮 Get Your Subject Recommendation</div>",
                     unsafe_allow_html=True)
         st.markdown(
-            "<p style='color:#5c5446;font-size:0.97rem;margin-top:-0.5rem;margin-bottom:1rem;'>"
+            "<p style='color:#e8e2d4;font-size:0.97rem;margin-top:-0.5rem;margin-bottom:1rem;'>"
             "Use <b>Single Student</b> for manual entry or "
             "<b>Bulk CSV Upload</b> to predict for many students at once.</p>",
             unsafe_allow_html=True)
@@ -1456,6 +1456,34 @@ intuition alone, particularly for consequential academic decisions."
                         </p>
                     </div>
                     """, unsafe_allow_html=True)
+
+                    # ── Subject × Course Mode table (single student) ──────────
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<div class='sub-title'>📋 Recommended Subject — Course Mode</div>",
+                        unsafe_allow_html=True)
+                    single_table_html = (
+                        "<div style='overflow-x:auto;'>"
+                        "<table style='width:100%;border-collapse:collapse;"
+                        "font-family:Times New Roman,serif;font-size:0.88rem;'>"
+                        "<thead><tr style='background:#112244;'>"
+                        "<th style='padding:0.5rem 0.8rem;text-align:left;color:#e8a830;"
+                        "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>Subject</th>"
+                        "<th style='padding:0.5rem 0.8rem;text-align:center;color:#e8a830;"
+                        "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>🌐 Online</th>"
+                        "<th style='padding:0.5rem 0.8rem;text-align:center;color:#e8a830;"
+                        "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>📚 Offline</th>"
+                        "</tr></thead><tbody>"
+                        f"<tr style='background:#f7f3ec;border-bottom:1px solid #ede8de;'>"
+                        f"<td style='padding:0.5rem 0.8rem;color:#112244;font-weight:700;'>{pred_subj}</td>"
+                        f"<td style='padding:0.5rem 0.8rem;text-align:center;color:#1a6b72;font-weight:700;"
+                        f"font-size:1rem;'>{'✅' if is_online else '—'}</td>"
+                        f"<td style='padding:0.5rem 0.8rem;text-align:center;color:#9b1d2a;font-weight:700;"
+                        f"font-size:1rem;'>{'✅' if not is_online else '—'}</td>"
+                        f"</tr>"
+                        "</tbody></table></div>"
+                    )
+                    st.markdown(single_table_html, unsafe_allow_html=True)
 
                     st.markdown("<hr class='gold-rule'>", unsafe_allow_html=True)
                     st.markdown(
@@ -1607,7 +1635,7 @@ intuition alone, particularly for consequential academic decisions."
                     f"color:#112244;min-width:110px;font-size:0.87rem;'>{cn}</span>"
                     f"<span style='color:#9b1d2a;font-weight:700;font-size:0.78rem;"
                     f"min-width:75px;'>{cr}</span>"
-                    f"<span style='color:#5c5446;font-size:0.87rem;'>{cd}</span>"
+                    f"<span style='color:#c8bfa8;font-size:0.87rem;'>{cd}</span>"
                     f"</div>",
                     unsafe_allow_html=True)
 
@@ -1888,6 +1916,65 @@ intuition alone, particularly for consequential academic decisions."
                                         plt.tight_layout(pad=2)
                                         st.pyplot(fig2, use_container_width=True)
                                         plt.close()
+
+                                        # ── Per-subject online/offline table ──
+                                        st.markdown("<br>", unsafe_allow_html=True)
+                                        st.markdown(
+                                            "<div class='sub-title'>📋 Subject × Course Mode Breakdown</div>",
+                                            unsafe_allow_html=True)
+                                        # Build per-subject online/offline counts
+                                        subj_mode = (
+                                            result_df
+                                            .groupby('Predicted Subject')['Course Mode']
+                                            .value_counts()
+                                            .unstack(fill_value=0)
+                                            .reset_index()
+                                        )
+                                        # Ensure both columns exist
+                                        for col_nm in ['Online Course', 'Offline Course']:
+                                            if col_nm not in subj_mode.columns:
+                                                subj_mode[col_nm] = 0
+                                        subj_mode['Total'] = subj_mode['Online Course'] + subj_mode['Offline Course']
+                                        subj_mode = subj_mode.rename(columns={
+                                            'Predicted Subject': 'Subject',
+                                            'Online Course':  '🌐 Online',
+                                            'Offline Course': '📚 Offline',
+                                        })[['Subject', '🌐 Online', '📚 Offline', 'Total']]
+                                        subj_mode = subj_mode.sort_values('Total', ascending=False).reset_index(drop=True)
+
+                                        # Render as styled HTML table
+                                        hdr = (
+                                            "<div style='overflow-x:auto;'>"
+                                            "<table style='width:100%;border-collapse:collapse;"
+                                            "font-family:Times New Roman,serif;font-size:0.88rem;'>"
+                                            "<thead><tr style='background:#112244;'>"
+                                            "<th style='padding:0.5rem 0.8rem;text-align:left;color:#e8a830;"
+                                            "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>Subject</th>"
+                                            "<th style='padding:0.5rem 0.8rem;text-align:center;color:#e8a830;"
+                                            "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>🌐 Online</th>"
+                                            "<th style='padding:0.5rem 0.8rem;text-align:center;color:#e8a830;"
+                                            "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>📚 Offline</th>"
+                                            "<th style='padding:0.5rem 0.8rem;text-align:center;color:#e8a830;"
+                                            "font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;'>Total</th>"
+                                            "</tr></thead><tbody>"
+                                        )
+                                        rows_html = ""
+                                        for i, r in subj_mode.iterrows():
+                                            bg = "#f7f3ec" if i % 2 == 0 else "#ffffff"
+                                            rows_html += (
+                                                f"<tr style='background:{bg};border-bottom:1px solid #ede8de;'>"
+                                                f"<td style='padding:0.45rem 0.8rem;color:#112244;"
+                                                f"font-weight:700;'>{r['Subject']}</td>"
+                                                f"<td style='padding:0.45rem 0.8rem;text-align:center;"
+                                                f"color:#1a6b72;font-weight:700;'>{int(r['🌐 Online'])}</td>"
+                                                f"<td style='padding:0.45rem 0.8rem;text-align:center;"
+                                                f"color:#9b1d2a;font-weight:700;'>{int(r['📚 Offline'])}</td>"
+                                                f"<td style='padding:0.45rem 0.8rem;text-align:center;"
+                                                f"color:#5c5446;font-weight:600;'>{int(r['Total'])}</td>"
+                                                f"</tr>"
+                                            )
+                                        st.markdown(hdr + rows_html + "</tbody></table></div>",
+                                                    unsafe_allow_html=True)
 
                                     with ch2:
                                         st.markdown(
